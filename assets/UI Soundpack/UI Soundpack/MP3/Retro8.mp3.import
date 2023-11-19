@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/Retro8.mp3-8f3b46f525e48a387c6d74e16fed4d02.mp3str"
+
+[deps]
+
+source_file="res://assets/UI Soundpack/UI Soundpack/MP3/Retro8.mp3"
+dest_files=[ "res://.import/Retro8.mp3-8f3b46f525e48a387c6d74e16fed4d02.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

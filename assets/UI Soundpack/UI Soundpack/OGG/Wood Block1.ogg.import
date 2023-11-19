@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/Wood Block1.ogg-b2bfa2ae6e2d945f0a31abfba87e3e80.oggstr"
+
+[deps]
+
+source_file="res://assets/UI Soundpack/UI Soundpack/OGG/Wood Block1.ogg"
+dest_files=[ "res://.import/Wood Block1.ogg-b2bfa2ae6e2d945f0a31abfba87e3e80.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

@@ -1,4 +1,7 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://assets/relaxing.mp3" type="AudioStream" id=1]
+[ext_resource path="res://assets/UI Soundpack/UI Soundpack/OGG/Retro3.ogg" type="AudioStream" id=2]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Node
@@ -22,3 +25,13 @@ func _ready():
 
 [node name="base" type="Node"]
 script = SubResource( 1 )
+
+[node name="BGMusicPlayer" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = ExtResource( 1 )
+
+[node name="SingleClickPlayer" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = ExtResource( 2 )
+
+[node name="DoubleClickPlayer" type="AudioStreamPlayer" parent="."]

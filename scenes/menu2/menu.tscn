@@ -18,16 +18,29 @@ var sc: ScrollContainer
 var lastKeyPressTime: float = 0
 var doublePressThreshold: float = 0.3
 
+var play_click_sounds = true
+var single_tap_sound: AudioStreamPlayer
+
+
 func _ready():
+	single_tap_sound = get_parent().get_node(\"%SingleClickPlayer\")
+	var bgmp: AudioStreamPlayer = get_parent().get_node(\"%BGMusicPlayer\")
+	bgmp.play()
+	var mtb: TextureButton = get_node(\"%MusicToggle\")
+	mtb.call_deferred(\"connect\", \"pressed\", self, \"toggle_bg_music\", [bgmp])
+	get_node(\"%SoundToggle\").call_deferred(\"connect\", \"pressed\", self, \"toggle_click_sounds\")
+	
+	
 	sc = get_node(\"%ScrollContainer\")
 	sc.get_h_scrollbar().rect_scale.x = 0
+	#warning-ignore:return_value_discarded
 	$InputTimer.connect(\"timeout\", self, \"_single_press\")
 
 
 func _on_TextureButton_pressed():
 	pass
 
-func _process(delta):
+func _process(_delta):
 	pass
 
 func _input(event):
@@ -37,18 +50,22 @@ func _input(event):
 		# Check for a double press
 		if currentTime - lastKeyPressTime < doublePressThreshold:
 			$InputTimer.stop()
-			print(\"Double press!\")
+#			print(\"Double press!\")
 			var b: TextureButton = get_node(\"%HBButtonCon\").get_child(current_index)
 			b.pressed = !b.pressed
+			b.emit_signal(\"pressed\")
 		else:
 			$InputTimer.start(doublePressThreshold)
 
 		# Update the last key press time
 		lastKeyPressTime = currentTime
 		
+		if play_click_sounds:
+			single_tap_sound.play()
+		
 		
 func _single_press():
-	print(\"Single press!\")
+#	print(\"Single press!\")
 	current_index += 1
 #	sc.ensure_control_visible(hbc.get_child(current_index))
 
@@ -61,7 +78,16 @@ func _single_press():
 		value = sc.scroll_horizontal + get_node(\"%PlayButton\").rect_size.x
 		
 		
-	tween.tween_property(sc, \"scroll_horizontal\", value, 1.0)
+	tween.tween_property(sc, \"scroll_horizontal\", value, 0.2)
+
+func toggle_click_sounds():
+	play_click_sounds = !play_click_sounds
+
+func toggle_bg_music(audio_player: AudioStreamPlayer):
+	if audio_player.playing:
+		audio_player.stop()
+	else:
+		audio_player.play()
 "
 
 [sub_resource type="DynamicFont" id=5]
