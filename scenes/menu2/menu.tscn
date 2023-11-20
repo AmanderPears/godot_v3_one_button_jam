@@ -88,6 +88,11 @@ func toggle_bg_music(audio_player: AudioStreamPlayer):
 		audio_player.stop()
 	else:
 		audio_player.play()
+
+
+func _on_PlayButton_pressed():
+	get_parent().call(\"next_scene\", self, \"game_scene\")
+	pass # Replace with function body.
 "
 
 [sub_resource type="DynamicFont" id=5]
@@ -189,4 +194,5 @@ expand = true
 unique_name_in_owner = true
 one_shot = true
 
+[connection signal="pressed" from="VBoxContainer/CenterContainer/ScrollContainer/HBButtonCon/PlayButton" to="." method="_on_PlayButton_pressed"]
 [connection signal="pressed" from="TextureButton" to="." method="_on_TextureButton_pressed"]
