@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Area2D
@@ -7,6 +7,10 @@ signal hit
 signal dead
 export var ship_max_hp = 20
 export var ship_current_hp = 20
+export var ship_max_mana = 10
+export var ship_current_mana = 10
+export var ship_mana_regen_per_second = 1
+
 
 func _ready():
 #	get_child(1).disabled = true
@@ -22,6 +26,9 @@ func _process(_delta):
 	
 	$HPProgressBar.max_value = ship_max_hp
 	$HPProgressBar.value = ship_current_hp
+	
+	$ManaBar.max_value = ship_max_mana
+	$ManaBar.value = ship_current_mana
 
 
 func _on_ship_body_entered(body):
@@ -31,6 +38,20 @@ func _on_ship_body_entered(body):
 	# Must be deferred as we can't change physics properties on a physics callback.
 #	get_child(1).set_deferred(\"disabled\", true)
 	pass # Replace with function body.
+
+
+func _on_AttackRange_body_entered(body):
+	if ship_current_mana - 1 > 0:
+		ship_current_mana -= 1
+		body.queue_free()
+	pass # Replace with function body.
+
+
+func _on_ManaTimer_timeout():
+	ship_current_mana += ship_mana_regen_per_second
+	if ship_current_mana > ship_max_mana:
+		ship_current_mana = ship_max_mana
+	pass # Replace with function body.
 "
 
 [sub_resource type="RectangleShape2D" id=2]
@@ -38,6 +59,9 @@ extents = Vector2( 72, 73.5 )
 
 [sub_resource type="StyleBoxFlat" id=3]
 bg_color = Color( 0.6, 0.0941176, 0.0941176, 1 )
+
+[sub_resource type="CircleShape2D" id=4]
+radius = 190.0
 
 [node name="ship" type="Area2D"]
 unique_name_in_owner = true
@@ -61,4 +85,26 @@ margin_bottom = 228.0
 custom_styles/fg = SubResource( 3 )
 percent_visible = false
 
+[node name="ManaBar" type="ProgressBar" parent="."]
+unique_name_in_owner = true
+margin_left = -26.0
+margin_top = 200.0
+margin_right = 174.0
+margin_bottom = 220.0
+rect_rotation = -90.0
+percent_visible = false
+
+[node name="AttackRange" type="Area2D" parent="."]
+visible = false
+position = Vector2( 99, 98 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackRange"]
+shape = SubResource( 4 )
+
+[node name="ManaTimer" type="Timer" parent="."]
+wait_time = 2.0
+autostart = true
+
 [connection signal="body_entered" from="." to="." method="_on_ship_body_entered"]
+[connection signal="body_entered" from="AttackRange" to="." method="_on_AttackRange_body_entered"]
+[connection signal="timeout" from="ManaTimer" to="." method="_on_ManaTimer_timeout"]
