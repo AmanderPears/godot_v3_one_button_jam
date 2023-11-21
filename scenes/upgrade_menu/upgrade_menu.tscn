@@ -17,12 +17,16 @@ script/source = "extends Node
 #using this array to track order after changes 
 var options = []
 var option_positions = []
-
+var allow_input = true
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	#warning-ignore:return_value_discarded
 	get_parent().connect(\"single_click\", self, \"single_click\")
+	
+	#warning-ignore:return_value_discarded
 	get_parent().connect(\"double_click\", self, \"double_click\")
+	
 	pass # Replace with function body.
 
 
@@ -30,33 +34,51 @@ func _ready():
 #func _process(delta):
 #	pass
 
-func _input(event):
-	if event is InputEventScreenTouch and event.is_pressed():
-		
-		if options.empty():
-			for option in get_node(\"%OptionContainer\").get_children():
-				options.append(option)
-				option_positions.append(option.rect_position)
-			
-			option_positions.append((option_positions[2] - option_positions[1]) + option_positions[2])
-		
-		var tween = get_tree().create_tween().set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT).set_parallel()
+func _input(_event):
+	pass
 
-		tween.tween_property(options[2], \"rect_position\", option_positions[1], 1)
-		tween.tween_property(options[1], \"rect_position\", option_positions[0], 1)
-		options[0].rect_position = option_positions[3]
-		tween.tween_property(options[0], \"rect_position\", option_positions[2], 1)
-		
-		
-		options.push_back(options.pop_front())
-		
-		
+func _allow_input(value):
+	allow_input = value		
 
 func single_click():
-	print(\"click\")
+	if !allow_input:
+		pass
+		
+	setup_options()
+	
+	var tween = get_tree().create_tween().set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT).set_parallel()
+
+	allow_input = false
+	tween.tween_property(options[2], \"rect_position\", option_positions[1], 0.5)
+	tween.tween_property(options[1], \"rect_position\", option_positions[0], 0.5)
+	options[0].rect_position = option_positions[3]
+	tween.tween_property(options[0], \"rect_position\", option_positions[2], 0.5)
+	tween.chain().tween_callback(self, \"_allow_input\", [true])
+	
+	options.push_back(options.pop_front())
 	
 func double_click():
-	print(\"dobule\")
+	if !allow_input:
+		pass
+		
+	setup_options()
+		
+	var e: TextureRect = options[1]
+	print(e.texture.resource_path)
+	print(\"ADS\")
+	
+	get_parent().call(\"next_scene\", self, \"game_scene\")
+
+
+func setup_options():
+	if !options.empty():
+		pass
+	
+	for option in get_node(\"%OptionContainer\").get_children():
+		options.append(option)
+		option_positions.append(option.rect_position)
+	
+	option_positions.append((option_positions[2] - option_positions[1]) + option_positions[2])
 "
 
 [sub_resource type="Shader" id=1]
