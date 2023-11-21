@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://assets/Prinbles_Buttons_Cartoon-II (v 1.0) (9_11_2023)/png@4x/Buttons/Square-Icon-Blue/Play-Click@4x.png" type="Texture" id=1]
 [ext_resource path="res://assets/Prinbles_Buttons_Cartoon-II (v 1.0) (9_11_2023)/png@4x/Buttons/Square-Icon-Blue/Music-Off-Idle@4x.png" type="Texture" id=2]
@@ -7,7 +7,9 @@
 [ext_resource path="res://assets/Prinbles_Buttons_Cartoon-II (v 1.0) (9_11_2023)/png@4x/Buttons/Square-Icon-Blue/Play-Idle@4x.png" type="Texture" id=5]
 [ext_resource path="res://assets/Prinbles_Buttons_Cartoon-II (v 1.0) (9_11_2023)/png@4x/Buttons/Square-Icon-Blue/Sound-Two-Idle@4x.png" type="Texture" id=6]
 [ext_resource path="res://assets/Prinbles_Buttons_Cartoon-II (v 1.0) (9_11_2023)/png@4x/Buttons/Square-Icon-Blue/Sound-None-Idle@4x.png" type="Texture" id=7]
-[ext_resource path="res://assets/pasti-font/PastiOblique-7B0wK.otf" type="DynamicFontData" id=8]
+[ext_resource path="res://assets/unutterable-font/UnutterableItalic-jE2E9.ttf" type="DynamicFontData" id=8]
+[ext_resource path="res://assets/single_press_illustration.png" type="Texture" id=9]
+[ext_resource path="res://assets/double_press_illustration.png" type="Texture" id=10]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Node
@@ -96,10 +98,23 @@ func _on_PlayButton_pressed():
 "
 
 [sub_resource type="DynamicFont" id=5]
-size = 89
+size = 70
 font_data = ExtResource( 8 )
 
 [sub_resource type="StyleBoxEmpty" id=2]
+
+[sub_resource type="Shader" id=6]
+code = "shader_type canvas_item;
+
+void fragment()
+{
+    COLOR.a = texture(TEXTURE, UV).a;
+    COLOR.rgb = vec3(1.0, 1.0, 1.0);
+}
+"
+
+[sub_resource type="ShaderMaterial" id=7]
+shader = SubResource( 6 )
 
 [sub_resource type="InputEventAction" id=3]
 action = "ui_accept"
@@ -121,27 +136,28 @@ anchor_bottom = 1.0
 
 [node name="Label" type="Label" parent="VBoxContainer"]
 margin_right = 480.0
-margin_bottom = 250.0
-rect_min_size = Vector2( 0, 250 )
+margin_bottom = 200.0
+rect_min_size = Vector2( 0, 200 )
 size_flags_vertical = 1
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 7
 custom_fonts/font = SubResource( 5 )
-text = "1-Button Jam"
+text = "Dred Air"
 align = 1
-valign = 2
+valign = 1
 autowrap = true
 
 [node name="CenterContainer" type="CenterContainer" parent="VBoxContainer"]
-margin_top = 254.0
+margin_top = 204.0
 margin_right = 480.0
-margin_bottom = 720.0
+margin_bottom = 476.0
 size_flags_vertical = 3
 
 [node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/CenterContainer"]
 unique_name_in_owner = true
 margin_left = 96.0
-margin_top = 97.0
 margin_right = 384.0
-margin_bottom = 369.0
+margin_bottom = 272.0
 rect_min_size = Vector2( 288, 272 )
 custom_styles/bg = SubResource( 2 )
 scroll_vertical_enabled = false
@@ -179,6 +195,43 @@ margin_bottom = 260.0
 toggle_mode = true
 texture_normal = ExtResource( 6 )
 texture_pressed = ExtResource( 7 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+margin_top = 480.0
+margin_right = 480.0
+margin_bottom = 720.0
+size_flags_vertical = 3
+
+[node name="CenterContainer" type="CenterContainer" parent="VBoxContainer/HBoxContainer"]
+margin_right = 238.0
+margin_bottom = 240.0
+size_flags_horizontal = 3
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/HBoxContainer/CenterContainer"]
+material = SubResource( 7 )
+margin_left = 69.0
+margin_top = 70.0
+margin_right = 169.0
+margin_bottom = 170.0
+rect_min_size = Vector2( 100, 100 )
+texture = ExtResource( 9 )
+expand = true
+
+[node name="CenterContainer2" type="CenterContainer" parent="VBoxContainer/HBoxContainer"]
+margin_left = 242.0
+margin_right = 480.0
+margin_bottom = 240.0
+size_flags_horizontal = 3
+
+[node name="TextureRect2" type="TextureRect" parent="VBoxContainer/HBoxContainer/CenterContainer2"]
+material = SubResource( 7 )
+margin_left = 69.0
+margin_top = 70.0
+margin_right = 169.0
+margin_bottom = 170.0
+rect_min_size = Vector2( 100, 100 )
+texture = ExtResource( 10 )
+expand = true
 
 [node name="TextureButton" type="TextureButton" parent="."]
 visible = false

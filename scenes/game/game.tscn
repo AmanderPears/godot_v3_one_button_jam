@@ -8,7 +8,7 @@ script/source = "extends Node
 
 export(PackedScene) var enemy_scene_01
 
-export var mission_duration = 30
+#export var mission_duration = 2.0
 
 func _ready():
 	randomize()
@@ -68,8 +68,10 @@ func _on_ship_dead():
 
 
 func _on_MissionProgressBar_mission_over():
-	get_parent().call(\"next_scene\", self, \"menu_scene\")
+	get_parent().call(\"next_scene\", self, \"upgrade_scene\")
 	pass # Replace with function body.
+
+	
 "
 
 [sub_resource type="GDScript" id=2]
@@ -161,6 +163,7 @@ margin_right = -29.0
 margin_bottom = 31.0
 percent_visible = false
 script = SubResource( 2 )
+mission_duration = 2
 
 [node name="Node" type="Node" parent="."]
 script = SubResource( 3 )

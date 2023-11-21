@@ -1,0 +1,189 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://assets/single_press_illustration.png" type="Texture" id=1]
+[ext_resource path="res://assets/max_mana_illu.png" type="Texture" id=2]
+[ext_resource path="res://assets/double_press_illustration.png" type="Texture" id=3]
+[ext_resource path="res://assets/max_mana_regen_illu.png" type="Texture" id=4]
+[ext_resource path="res://assets/multiple_proj_illu.png" type="Texture" id=5]
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends Node
+
+
+# Declare member variables here. Examples:
+# var a = 2
+# var b = \"text\"
+
+#using this array to track order after changes 
+var options = []
+var option_positions = []
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	get_parent().connect(\"single_click\", self, \"single_click\")
+	get_parent().connect(\"double_click\", self, \"double_click\")
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+#func _process(delta):
+#	pass
+
+func _input(event):
+	if event is InputEventScreenTouch and event.is_pressed():
+		
+		if options.empty():
+			for option in get_node(\"%OptionContainer\").get_children():
+				options.append(option)
+				option_positions.append(option.rect_position)
+			
+			option_positions.append((option_positions[2] - option_positions[1]) + option_positions[2])
+		
+		var tween = get_tree().create_tween().set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT).set_parallel()
+
+		tween.tween_property(options[2], \"rect_position\", option_positions[1], 1)
+		tween.tween_property(options[1], \"rect_position\", option_positions[0], 1)
+		options[0].rect_position = option_positions[3]
+		tween.tween_property(options[0], \"rect_position\", option_positions[2], 1)
+		
+		
+		options.push_back(options.pop_front())
+		
+		
+
+func single_click():
+	print(\"click\")
+	
+func double_click():
+	print(\"dobule\")
+"
+
+[sub_resource type="Shader" id=1]
+code = "shader_type canvas_item;
+
+void fragment()
+{
+    COLOR.a = texture(TEXTURE, UV).a;
+    COLOR.rgb = vec3(1.0, 1.0, 1.0);
+}
+"
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = SubResource( 1 )
+
+[node name="UpgradeMenu" type="Node"]
+script = SubResource( 3 )
+
+[node name="Control" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_clip_content = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_clip_content = true
+
+[node name="Container" type="Control" parent="Control/VBoxContainer"]
+margin_right = 480.0
+margin_bottom = 150.0
+rect_min_size = Vector2( 0, 150 )
+rect_clip_content = true
+
+[node name="CenterContainer" type="CenterContainer" parent="Control/VBoxContainer"]
+margin_top = 154.0
+margin_right = 480.0
+margin_bottom = 542.0
+rect_min_size = Vector2( 200, 200 )
+rect_clip_content = true
+size_flags_vertical = 3
+
+[node name="ViewportContainer" type="ViewportContainer" parent="Control/VBoxContainer/CenterContainer"]
+margin_left = 240.0
+margin_top = 194.0
+margin_right = 240.0
+margin_bottom = 194.0
+
+[node name="OptionContainer" type="HBoxContainer" parent="Control/VBoxContainer/CenterContainer/ViewportContainer"]
+unique_name_in_owner = true
+margin_left = -490.0
+margin_top = -150.0
+margin_right = 490.0
+margin_bottom = 150.0
+rect_clip_content = true
+size_flags_horizontal = 0
+size_flags_vertical = 3
+custom_constants/separation = 40
+
+[node name="TextureRect1" type="TextureRect" parent="Control/VBoxContainer/CenterContainer/ViewportContainer/OptionContainer"]
+unique_name_in_owner = true
+margin_right = 300.0
+margin_bottom = 300.0
+rect_min_size = Vector2( 300, 300 )
+size_flags_horizontal = 0
+size_flags_vertical = 4
+texture = ExtResource( 2 )
+expand = true
+
+[node name="TextureRect2" type="TextureRect" parent="Control/VBoxContainer/CenterContainer/ViewportContainer/OptionContainer"]
+unique_name_in_owner = true
+margin_left = 340.0
+margin_right = 640.0
+margin_bottom = 300.0
+rect_min_size = Vector2( 300, 300 )
+size_flags_vertical = 4
+texture = ExtResource( 4 )
+expand = true
+
+[node name="TextureRect3" type="TextureRect" parent="Control/VBoxContainer/CenterContainer/ViewportContainer/OptionContainer"]
+unique_name_in_owner = true
+margin_left = 680.0
+margin_right = 980.0
+margin_bottom = 300.0
+rect_min_size = Vector2( 300, 300 )
+size_flags_horizontal = 0
+size_flags_vertical = 4
+texture = ExtResource( 5 )
+expand = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/VBoxContainer"]
+margin_top = 546.0
+margin_right = 480.0
+margin_bottom = 646.0
+rect_clip_content = true
+
+[node name="CenterContainer" type="CenterContainer" parent="Control/VBoxContainer/HBoxContainer"]
+margin_right = 238.0
+margin_bottom = 100.0
+size_flags_horizontal = 3
+
+[node name="TextureRect" type="TextureRect" parent="Control/VBoxContainer/HBoxContainer/CenterContainer"]
+material = SubResource( 2 )
+margin_left = 69.0
+margin_right = 169.0
+margin_bottom = 100.0
+rect_min_size = Vector2( 100, 100 )
+texture = ExtResource( 1 )
+expand = true
+
+[node name="CenterContainer2" type="CenterContainer" parent="Control/VBoxContainer/HBoxContainer"]
+margin_left = 242.0
+margin_right = 480.0
+margin_bottom = 100.0
+size_flags_horizontal = 3
+
+[node name="TextureRect" type="TextureRect" parent="Control/VBoxContainer/HBoxContainer/CenterContainer2"]
+material = SubResource( 2 )
+margin_left = 69.0
+margin_right = 169.0
+margin_bottom = 100.0
+rect_min_size = Vector2( 100, 100 )
+texture = ExtResource( 3 )
+expand = true
+
+[node name="MarginContainer" type="Control" parent="Control/VBoxContainer"]
+margin_top = 650.0
+margin_right = 480.0
+margin_bottom = 720.0
+rect_min_size = Vector2( 0, 70 )

@@ -6,19 +6,24 @@
 [sub_resource type="GDScript" id=1]
 script/source = "extends Node
 
+signal single_click
+signal double_click
+
 var scene_resources = {
 	\"menu_scene\": preload(\"res://scenes/menu2/menu.tscn\"),
-	\"game_scene\": preload(\"res://scenes/game/game.tscn\")
+	\"game_scene\": preload(\"res://scenes/game/game.tscn\"),
+	\"upgrade_scene\": preload(\"res://scenes/upgrade_menu/upgrade_menu.tscn\")
 }
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = \"text\"
-
+var lastKeyPressTime: float = 0
+export var doublePressThreshold: float = 0.3
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	call_deferred('add_child', scene_resources[\"menu_scene\"].instance())
+	
+	#warning-ignore:return_value_discarded
+	$InputTimer.connect(\"timeout\", self, \"_single_press\")
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -28,6 +33,26 @@ func _ready():
 func next_scene(current, scene_name: String):
 	current.queue_free()
 	call_deferred('add_child', scene_resources[scene_name].instance())
+
+
+func _input(event):
+	if (event is InputEventScreenTouch or event is InputEventKey) and event.is_pressed():
+		var currentTime = OS.get_ticks_msec() / 1000.0
+
+		# Check for a double press
+		if currentTime - lastKeyPressTime < doublePressThreshold:
+			$InputTimer.stop()
+			emit_signal(\"double_click\")
+		else:
+			$InputTimer.start(doublePressThreshold)
+
+		# Update the last key press time
+		lastKeyPressTime = currentTime
+		
+		
+func _single_press():
+	emit_signal(\"single_click\")
+	pass
 "
 
 [node name="base" type="Node"]
@@ -42,3 +67,6 @@ unique_name_in_owner = true
 stream = ExtResource( 2 )
 
 [node name="DoubleClickPlayer" type="AudioStreamPlayer" parent="."]
+
+[node name="InputTimer" type="Timer" parent="."]
+one_shot = true
