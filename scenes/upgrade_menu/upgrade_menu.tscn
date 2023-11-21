@@ -42,7 +42,7 @@ func _allow_input(value):
 
 func single_click():
 	if !allow_input:
-		pass
+		return
 		
 	setup_options()
 	
@@ -59,20 +59,16 @@ func single_click():
 	
 func double_click():
 	if !allow_input:
-		pass
+		return
 		
 	setup_options()
-		
-	var e: TextureRect = options[1]
-	print(e.texture.resource_path)
-	print(\"ADS\")
 	
 	get_parent().call(\"next_scene\", self, \"game_scene\")
 
 
 func setup_options():
 	if !options.empty():
-		pass
+		return
 	
 	for option in get_node(\"%OptionContainer\").get_children():
 		options.append(option)

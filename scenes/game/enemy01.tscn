@@ -15,19 +15,19 @@ func _on_VisibilityNotifier2D_screen_exited():
 	pass # Replace with function body.
 "
 
-[sub_resource type="AtlasTexture" id=3]
+[sub_resource type="AtlasTexture" id=6]
 flags = 4
 atlas = ExtResource( 1 )
-region = Rect2( 0, 0, 938, 861 )
+region = Rect2( 473, 0, 473, 743 )
 
-[sub_resource type="AtlasTexture" id=4]
+[sub_resource type="AtlasTexture" id=7]
 flags = 4
 atlas = ExtResource( 1 )
-region = Rect2( 938, 0, 938, 861 )
+region = Rect2( 0, 0, 473, 743 )
 
 [sub_resource type="SpriteFrames" id=5]
 animations = [ {
-"frames": [ SubResource( 3 ), SubResource( 4 ) ],
+"frames": [ SubResource( 6 ), SubResource( 7 ) ],
 "loop": true,
 "name": "default",
 "speed": 5.0
