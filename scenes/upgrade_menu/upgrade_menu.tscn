@@ -21,6 +21,8 @@ var option_positions = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	get_parent().connect(\"single_click\", self, \"single_click\")
+	get_parent().connect(\"double_click\", self, \"double_click\")
 	pass # Replace with function body.
 
 
@@ -49,6 +51,12 @@ func _input(event):
 		options.push_back(options.pop_front())
 		
 		
+
+func single_click():
+	print(\"click\")
+	
+func double_click():
+	print(\"dobule\")
 "
 
 [sub_resource type="Shader" id=1]
