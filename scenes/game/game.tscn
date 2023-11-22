@@ -13,6 +13,8 @@ export(PackedScene) var enemy_scene_01
 func _ready():
 	randomize()
 	
+	load_buffs()
+	
 #	$MissonTimer.call_deferred(\"start\", mission_duration)
 	$MissionProgressBar.call(\"start_progress\")
 	
@@ -72,6 +74,22 @@ func _on_MissionProgressBar_mission_over():
 	pass # Replace with function body.
 
 	
+func load_buffs():
+	var buffs = get_parent().get(\"buffs\")
+	
+	for buff in buffs:
+		
+		match buff.type:
+			\"mana_max\":
+				$ship.call_deferred(\"add_to_max_mana\", buff.value)
+				print(\"max_mana\")
+			\"mana_regen\":
+				$ship.call_deferred(\"add_to_mana_regen\", buff.value)
+				print(\"mana_regen\")
+			\"extra_proj\":
+#				$ship.call_deferred(\"set\", \"ship_max_mana\", buff.value)
+				print(\"extra proj\")
+		
 "
 
 [sub_resource type="GDScript" id=2]
@@ -163,6 +181,7 @@ margin_right = -29.0
 margin_bottom = 31.0
 percent_visible = false
 script = SubResource( 2 )
+mission_duration = 10
 
 [node name="Node" type="Node" parent="."]
 script = SubResource( 3 )
@@ -195,8 +214,6 @@ position = Vector2( 120, 48 )
 rotation = 1.5708
 
 [node name="ship" parent="." instance=ExtResource( 2 )]
-ship_max_mana = 3
-ship_current_mana = 3
 
 [connection signal="mission_over" from="MissionProgressBar" to="." method="_on_MissionProgressBar_mission_over"]
 [connection signal="dead" from="ship" to="." method="_on_ship_dead"]

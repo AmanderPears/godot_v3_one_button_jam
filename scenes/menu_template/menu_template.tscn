@@ -1,7 +1,10 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=9 format=2]
 
-[ext_resource path="res://assets/single_press_illustration.png" type="Texture" id=1]
-[ext_resource path="res://assets/double_press_illustration.png" type="Texture" id=3]
+[ext_resource path="res://assets/multiple_proj_illu.png" type="Texture" id=1]
+[ext_resource path="res://assets/max_mana_illu.png" type="Texture" id=2]
+[ext_resource path="res://assets/max_mana_regen_illu.png" type="Texture" id=3]
+[ext_resource path="res://assets/single_press_illustration.png" type="Texture" id=4]
+[ext_resource path="res://assets/double_press_illustration.png" type="Texture" id=5]
 
 [sub_resource type="GDScript" id=3]
 script/source = "extends Node
@@ -13,33 +16,8 @@ script/source = "extends Node
 
 #using this array to track order after changes 
 var options = []
-var option_positions = [
-	Vector2(0,0),
-	Vector2(340,0),
-	Vector2(680,0),
-	Vector2(1020,0)
-]
+var option_positions = []
 var allow_input = true
-
-var all_buffs = [
-	{
-		\"type\" : \"mana_max\",
-		\"value\" : 2,
-		\"texture_path\" : \"res://assets/max_mana_illu.png\"
-	},
-	{
-		\"type\" : \"mana_regen\",
-		\"value\" : 1,
-		\"texture_path\" : \"res://assets/max_mana_regen_illu.png\"
-	},
-	{
-		\"type\" : \"extra_proj\",
-		\"value\" : 1,
-		\"texture_path\" : \"res://assets/multiple_proj_illu.png\"
-	}
-]
-
-var option_texture_rect = preload(\"res://scenes/upgrade_menu/upgrade_option.tscn\")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -48,8 +26,6 @@ func _ready():
 	
 	#warning-ignore:return_value_discarded
 	get_parent().connect(\"double_click\", self, \"double_click\")
-	
-	current_options_pool()
 	
 	pass # Replace with function body.
 
@@ -68,7 +44,7 @@ func single_click():
 	if !allow_input:
 		return
 		
-#	setup_options()
+	setup_options()
 	
 	var tween = get_tree().create_tween().set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT).set_parallel()
 
@@ -85,8 +61,7 @@ func double_click():
 	if !allow_input:
 		return
 		
-#	setup_options()
-	options[1].call(\"double_click\")
+	setup_options()
 	
 	get_parent().call(\"next_scene\", self, \"game_scene\")
 
@@ -100,24 +75,6 @@ func setup_options():
 		option_positions.append(option.rect_position)
 	
 	option_positions.append((option_positions[2] - option_positions[1]) + option_positions[2])
-
-
-func current_options_pool():
-	var rng = RandomNumberGenerator.new()
-	rng.randomize()
-	
-	var current_option
-	for i in 3:
-		current_option = all_buffs[rng.randi_range(0, all_buffs.size()-1)]
-		
-		var tr: TextureRect = option_texture_rect.instance()
-		tr.texture = load(current_option.texture_path)
-		tr.rect_position = option_positions[i]
-		tr.set(\"parent\", get_parent())
-		tr.set(\"obj\", current_option)
-		options.append(tr)
-		get_node(\"%OptionContainer\").add_child(tr)
-		
 "
 
 [sub_resource type="Shader" id=1]
@@ -177,6 +134,37 @@ size_flags_horizontal = 0
 size_flags_vertical = 3
 custom_constants/separation = 40
 
+[node name="TextureRect1" type="TextureRect" parent="Control/VBoxContainer/CenterContainer/ViewportContainer/OptionContainer"]
+unique_name_in_owner = true
+margin_right = 300.0
+margin_bottom = 300.0
+rect_min_size = Vector2( 300, 300 )
+size_flags_horizontal = 0
+size_flags_vertical = 4
+texture = ExtResource( 2 )
+expand = true
+
+[node name="TextureRect2" type="TextureRect" parent="Control/VBoxContainer/CenterContainer/ViewportContainer/OptionContainer"]
+unique_name_in_owner = true
+margin_left = 340.0
+margin_right = 640.0
+margin_bottom = 300.0
+rect_min_size = Vector2( 300, 300 )
+size_flags_vertical = 4
+texture = ExtResource( 3 )
+expand = true
+
+[node name="TextureRect3" type="TextureRect" parent="Control/VBoxContainer/CenterContainer/ViewportContainer/OptionContainer"]
+unique_name_in_owner = true
+margin_left = 680.0
+margin_right = 980.0
+margin_bottom = 300.0
+rect_min_size = Vector2( 300, 300 )
+size_flags_horizontal = 0
+size_flags_vertical = 4
+texture = ExtResource( 1 )
+expand = true
+
 [node name="HBoxContainer" type="HBoxContainer" parent="Control/VBoxContainer"]
 margin_top = 546.0
 margin_right = 480.0
@@ -194,7 +182,7 @@ margin_left = 69.0
 margin_right = 169.0
 margin_bottom = 100.0
 rect_min_size = Vector2( 100, 100 )
-texture = ExtResource( 1 )
+texture = ExtResource( 4 )
 expand = true
 
 [node name="CenterContainer2" type="CenterContainer" parent="Control/VBoxContainer/HBoxContainer"]
@@ -209,7 +197,7 @@ margin_left = 69.0
 margin_right = 169.0
 margin_bottom = 100.0
 rect_min_size = Vector2( 100, 100 )
-texture = ExtResource( 3 )
+texture = ExtResource( 5 )
 expand = true
 
 [node name="MarginContainer" type="Control" parent="Control/VBoxContainer"]

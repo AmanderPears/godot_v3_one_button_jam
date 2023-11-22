@@ -1,8 +1,9 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://assets/ship/ship_03.png" type="Texture" id=1]
 [ext_resource path="res://assets/ship/ship_01.png" type="Texture" id=2]
 [ext_resource path="res://assets/ship/ship_02.png" type="Texture" id=3]
+[ext_resource path="res://assets/ship/ship.png" type="Texture" id=4]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Area2D
@@ -11,16 +12,17 @@ var attack_resource = preload(\"res://scenes/game/attack.tscn\")
 
 signal hit
 signal dead
-export var ship_max_hp = 20
-export var ship_current_hp = 20
-export var ship_max_mana = 10
-export var ship_current_mana = 10
-export var ship_mana_regen_per_second = 1
-export var ship_attack_range = 200
+var ship_max_hp = 20
+var ship_current_hp = 20
+var ship_max_mana = 10
+var ship_current_mana = 10
+var ship_mana_regen_per_second = 1
+var ship_attack_range = 200
 
 
 func _ready():
 #	get_child(1).disabled = true
+	#warning-ignore:return_value_discarded
 	get_parent().get_parent().connect(\"single_click\", self, \"_attack_on_single_click\")
 
 	pass
@@ -55,8 +57,9 @@ func _on_AttackRange_body_entered(body):
 #		body.queue_free()
 		
 		var attack = attack_resource.instance()
+		get_parent().call_deferred(\"add_child\", attack)
 		attack.start($AttackStartPosition.global_transform, body)
-		get_parent().add_child(attack)
+#		attack.call_deferred(\"start\", $AttackStartPosition.global_transform, body)
 		
 		
 	pass # Replace with function body.
@@ -71,6 +74,15 @@ func _on_ManaTimer_timeout():
 
 func _attack_on_single_click():
 	print(\"AA\")
+
+
+func add_to_max_mana(value):
+	print(\"value increased\")
+	ship_max_mana += value
+	
+func add_to_mana_regen(value):
+	print(\"value increased\")
+	ship_mana_regen_per_second += value
 "
 
 [sub_resource type="SpriteFrames" id=5]
@@ -82,7 +94,7 @@ animations = [ {
 } ]
 
 [sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 125, 28 )
+extents = Vector2( 80.5, 56.5 )
 
 [sub_resource type="StyleBoxFlat" id=3]
 bg_color = Color( 0.6, 0.0941176, 0.0941176, 1 )
@@ -95,11 +107,17 @@ unique_name_in_owner = true
 position = Vector2( 144, 72 )
 script = SubResource( 1 )
 
+[node name="Sprite" type="Sprite" parent="."]
+position = Vector2( 99, 85 )
+scale = Vector2( 0.3, 0.3 )
+texture = ExtResource( 4 )
+
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+visible = false
 position = Vector2( 99, 98 )
 scale = Vector2( 0.3, 0.3 )
 frames = SubResource( 5 )
-frame = 1
+frame = 2
 speed_scale = 0.5
 playing = true
 
@@ -110,7 +128,7 @@ margin_bottom = 200.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 modulate = Color( 0.129412, 0.6, 0.0313726, 1 )
-position = Vector2( 105, 85 )
+position = Vector2( 92.5, 113.5 )
 shape = SubResource( 2 )
 
 [node name="HPProgressBar" type="ProgressBar" parent="."]

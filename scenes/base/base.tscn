@@ -9,6 +9,7 @@ script/source = "extends Node
 signal single_click
 signal double_click
 var click_sounds = true
+var buffs = []
 
 
 var scene_resources = {
@@ -72,6 +73,10 @@ func toggle_bg_music():
 		$BGMusicPlayer.stop()
 	else:
 		$BGMusicPlayer.play()
+
+
+func add_buff(obj):
+	buffs.append(obj)
 "
 
 [node name="base" type="Node"]
