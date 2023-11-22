@@ -8,9 +8,12 @@ script/source = "extends Node
 
 signal single_click
 signal double_click
+var click_sounds = true
+
 
 var scene_resources = {
-	\"menu_scene\": preload(\"res://scenes/menu2/menu.tscn\"),
+#	\"menu_scene\": preload(\"res://scenes/menu2/menu.tscn\"),
+	\"menu_scene\": preload(\"res://scenes/menu/menu.tscn\"),
 	\"game_scene\": preload(\"res://scenes/game/game.tscn\"),
 	\"upgrade_scene\": preload(\"res://scenes/upgrade_menu/upgrade_menu.tscn\")
 }
@@ -53,6 +56,22 @@ func _input(event):
 func _single_press():
 	emit_signal(\"single_click\")
 	pass
+
+
+func toggle_click_sounds():
+	click_sounds = !click_sounds
+
+
+func play_click_sound():
+	if click_sounds:
+		$SingleClickPlayer.play()
+
+
+func toggle_bg_music():
+	if $BGMusicPlayer.playing:
+		$BGMusicPlayer.stop()
+	else:
+		$BGMusicPlayer.play()
 "
 
 [node name="base" type="Node"]
