@@ -1,12 +1,13 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://assets/single_press_illustration.png" type="Texture" id=1]
-[ext_resource path="res://assets/max_mana_illu.png" type="Texture" id=2]
+[ext_resource path="res://assets/menu/click_unmute_button.png" type="Texture" id=2]
 [ext_resource path="res://assets/double_press_illustration.png" type="Texture" id=3]
 [ext_resource path="res://assets/menu/menu_mute_button.png" type="Texture" id=4]
 [ext_resource path="res://assets/menu/menu_unmute_button.png" type="Texture" id=5]
 [ext_resource path="res://assets/menu/menu_play_button.png" type="Texture" id=6]
 [ext_resource path="res://assets/menu/menu_title.png" type="Texture" id=7]
+[ext_resource path="res://assets/menu/click_mute_button.png" type="Texture" id=8]
 
 [sub_resource type="GDScript" id=3]
 script/source = "extends Node
@@ -75,6 +76,7 @@ func double_click():
 		options[1].pressed = !options[1].pressed
 	else:
 		get_parent().call(\"toggle_click_sounds\")
+		options[1].pressed = !options[1].pressed
 #		options[1].pressed = !options[1].pressed
 #		options[1].pressed = !options[1].pressed
 
@@ -162,14 +164,16 @@ size_flags_horizontal = 0
 size_flags_vertical = 3
 custom_constants/separation = 40
 
-[node name="TextureRect1" type="TextureRect" parent="Control/VBoxContainer/CenterContainer/ViewportContainer/OptionContainer"]
+[node name="TextureRect1" type="TextureButton" parent="Control/VBoxContainer/CenterContainer/ViewportContainer/OptionContainer"]
 unique_name_in_owner = true
 margin_right = 300.0
 margin_bottom = 300.0
 rect_min_size = Vector2( 300, 300 )
 size_flags_horizontal = 0
 size_flags_vertical = 4
-texture = ExtResource( 2 )
+toggle_mode = true
+texture_normal = ExtResource( 8 )
+texture_pressed = ExtResource( 2 )
 expand = true
 
 [node name="TextureRect2" type="TextureRect" parent="Control/VBoxContainer/CenterContainer/ViewportContainer/OptionContainer"]
