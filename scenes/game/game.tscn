@@ -87,7 +87,7 @@ func load_buffs():
 				$ship.call_deferred(\"add_to_mana_regen\", buff.value)
 				print(\"mana_regen\")
 			\"extra_proj\":
-#				$ship.call_deferred(\"set\", \"ship_max_mana\", buff.value)
+				$ship.call_deferred(\"add_to_proj_count\", buff.value)
 				print(\"extra proj\")
 		
 "

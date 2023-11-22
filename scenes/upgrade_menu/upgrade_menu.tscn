@@ -111,6 +111,7 @@ func current_options_pool():
 		current_option = all_buffs[rng.randi_range(0, all_buffs.size()-1)]
 		
 		var tr: TextureRect = option_texture_rect.instance()
+#		tr.texture = current_option.texture_path
 		tr.texture = load(current_option.texture_path)
 		tr.rect_position = option_positions[i]
 		tr.set(\"parent\", get_parent())
