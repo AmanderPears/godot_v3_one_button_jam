@@ -48,7 +48,7 @@ func create_enemy():
 	mob.rotation = direction + PI / 2
 #
 #	# Choose the velocity for the mob.
-	var velocity = Vector2(rand_range(150.0, 250.0), 0.0)
+	var velocity = Vector2(rand_range(100.0, 150.0), 0.0)
 #	mob.linear_velocity = velocity.rotated(direction)
 	mob.linear_velocity = velocity.rotated(direction)
 
@@ -163,7 +163,6 @@ margin_right = -29.0
 margin_bottom = 31.0
 percent_visible = false
 script = SubResource( 2 )
-mission_duration = 2
 
 [node name="Node" type="Node" parent="."]
 script = SubResource( 3 )

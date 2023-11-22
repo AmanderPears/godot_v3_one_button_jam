@@ -7,6 +7,8 @@
 [sub_resource type="GDScript" id=1]
 script/source = "extends Area2D
 
+var attack_resource = preload(\"res://scenes/game/attack.tscn\")
+
 signal hit
 signal dead
 export var ship_max_hp = 20
@@ -14,11 +16,12 @@ export var ship_current_hp = 20
 export var ship_max_mana = 10
 export var ship_current_mana = 10
 export var ship_mana_regen_per_second = 1
+export var ship_attack_range = 200
 
 
 func _ready():
 #	get_child(1).disabled = true
-
+	get_parent().get_parent().connect(\"single_click\", self, \"_attack_on_single_click\")
 
 	pass
 
@@ -33,6 +36,8 @@ func _process(_delta):
 	
 	$ManaBar.max_value = ship_max_mana
 	$ManaBar.value = ship_current_mana
+	
+	$AttackRange/AttackCollisionRange.shape.radius = ship_attack_range
 
 
 func _on_ship_body_entered(body):
@@ -47,7 +52,13 @@ func _on_ship_body_entered(body):
 func _on_AttackRange_body_entered(body):
 	if ship_current_mana - 1 > 0:
 		ship_current_mana -= 1
-		body.queue_free()
+#		body.queue_free()
+		
+		var attack = attack_resource.instance()
+		attack.start($AttackStartPosition.global_transform, body)
+		get_parent().add_child(attack)
+		
+		
 	pass # Replace with function body.
 
 
@@ -56,6 +67,10 @@ func _on_ManaTimer_timeout():
 	if ship_current_mana > ship_max_mana:
 		ship_current_mana = ship_max_mana
 	pass # Replace with function body.
+
+
+func _attack_on_single_click():
+	print(\"AA\")
 "
 
 [sub_resource type="SpriteFrames" id=5]
@@ -67,7 +82,7 @@ animations = [ {
 } ]
 
 [sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 72, 73.5 )
+extents = Vector2( 125, 28 )
 
 [sub_resource type="StyleBoxFlat" id=3]
 bg_color = Color( 0.6, 0.0941176, 0.0941176, 1 )
@@ -84,7 +99,7 @@ script = SubResource( 1 )
 position = Vector2( 99, 98 )
 scale = Vector2( 0.3, 0.3 )
 frames = SubResource( 5 )
-frame = 3
+frame = 1
 speed_scale = 0.5
 playing = true
 
@@ -95,7 +110,7 @@ margin_bottom = 200.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 modulate = Color( 0.129412, 0.6, 0.0313726, 1 )
-position = Vector2( 99, 97.5 )
+position = Vector2( 105, 85 )
 shape = SubResource( 2 )
 
 [node name="HPProgressBar" type="ProgressBar" parent="."]
@@ -116,15 +131,17 @@ rect_rotation = -90.0
 percent_visible = false
 
 [node name="AttackRange" type="Area2D" parent="."]
-visible = false
 position = Vector2( 99, 98 )
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackRange"]
+[node name="AttackCollisionRange" type="CollisionShape2D" parent="AttackRange"]
 shape = SubResource( 4 )
 
 [node name="ManaTimer" type="Timer" parent="."]
 wait_time = 2.0
 autostart = true
+
+[node name="AttackStartPosition" type="Position2D" parent="."]
+position = Vector2( 78, 133 )
 
 [connection signal="body_entered" from="." to="." method="_on_ship_body_entered"]
 [connection signal="body_entered" from="AttackRange" to="." method="_on_AttackRange_body_entered"]

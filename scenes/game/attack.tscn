@@ -1,0 +1,77 @@
+[gd_scene load_steps=3 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Area2D
+
+export var speed = 500
+export var steer_force = 150
+var target
+
+var velocity = Vector2.ZERO
+var acceleration = Vector2.ZERO
+
+func start(_transform, _target):
+	
+	target = _target
+	
+	global_transform = _transform
+	velocity = transform.x * speed
+	$Timer.start()
+
+func _process(delta):
+	acceleration += seek()
+	velocity += acceleration * delta
+	velocity = velocity.clamped(speed)
+	rotation = velocity.angle()
+	position += velocity * delta
+
+
+func seek():
+	var steer = Vector2.ZERO
+	if target and target.is_inside_tree():
+		var desired = (target.position - position).normalized() * speed
+		steer = (desired - velocity).normalized() * steer_force
+	return steer
+	
+	
+#func is_target_valid()
+
+
+func _on_VisibilityNotifier2D_screen_exited():
+	queue_free()
+
+
+func _on_Timer_timeout():
+	queue_free()
+
+
+func _on_Area2D_body_entered(body):
+	body.queue_free()
+	queue_free()
+"
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 5, 5 )
+
+[node name="Area2D" type="Area2D"]
+script = SubResource( 1 )
+
+[node name="ColorRect" type="ColorRect" parent="."]
+margin_right = 10.0
+margin_bottom = 10.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 5, 5 )
+shape = SubResource( 2 )
+
+[node name="VisibilityNotifier2D" type="VisibilityNotifier2D" parent="."]
+position = Vector2( 5, 5 )
+scale = Vector2( 0.5, 0.5 )
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
+
+[connection signal="body_entered" from="." to="." method="_on_Area2D_body_entered"]
+[connection signal="screen_exited" from="VisibilityNotifier2D" to="." method="_on_VisibilityNotifier2D_screen_exited"]
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
