@@ -1,0 +1,120 @@
+[gd_scene load_steps=3 format=2]
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends Area2D
+
+signal single_click
+signal double_click
+signal longpress_start
+signal longpress_end
+
+
+var singleClickRelease = false
+var lastKeyPressTime: float = 0
+export var doublePressThreshold: float = 0.3
+
+
+var old_scale
+var long_press = false
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	
+	#warning-ignore:return_value_discarded
+	$InputTimer.one_shot = true
+	$InputTimer.wait_time = 0.3
+	$InputTimer.connect(\"timeout\", self, \"_single_press\")
+	
+	$LongPressTimer.wait_time = 0.1
+	$LongPressTimer.connect(\"timeout\", self, \"_long_press\")
+
+	old_scale = scale
+
+func _input(event):
+	if event is InputEventScreenTouch or event is InputEventKey:
+		
+		if event.is_pressed():
+			singleClickRelease = false
+			var currentTime = OS.get_ticks_msec() / 1000.0
+
+			# Check for a double press
+			if currentTime - lastKeyPressTime < doublePressThreshold:
+				$InputTimer.stop()
+				emit_signal(\"double_click\")
+				
+				print(\"douub;e\")
+			else:
+				$InputTimer.start(doublePressThreshold)
+
+			# Update the last key press time
+			lastKeyPressTime = currentTime
+		else:
+			singleClickRelease = true
+#			print(\"release %s\" % singleClickRelease)
+	
+		
+		
+func _single_press():
+	if singleClickRelease:
+		print(\"singl;e\")
+		emit_signal(\"single_click\")
+	else:
+		emit_signal(\"longpress_start\")
+		$LongPressTimer.start()
+		print(\"lp_start\")
+		
+
+func _long_press():
+	if singleClickRelease:
+		$LongPressTimer.stop()
+		print(\"lp_end\")
+		emit_signal(\"longpress_end\")
+
+
+func _on_Area2D_longpress_start():
+	long_press = true	
+
+
+func _on_Area2D_longpress_end():
+	long_press = false	
+	scale = old_scale
+
+
+
+func _process(delta):
+#	if long_press and Engine.get_idle_frames() % 2 == 0:
+	if long_press:
+		scale += Vector2(.01, .01)
+		
+"
+
+[sub_resource type="CircleShape2D" id=2]
+radius = 77.42
+
+[node name="Area2D" type="Area2D"]
+position = Vector2( 230, 261 )
+script = SubResource( 3 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -75.0
+margin_top = -75.0
+margin_right = 75.0
+margin_bottom = 75.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 2 )
+
+[node name="InputTimer" type="Timer" parent="."]
+
+[node name="LongPressTimer" type="Timer" parent="."]
+
+[connection signal="longpress_end" from="." to="." method="_on_Area2D_longpress_end"]
+[connection signal="longpress_start" from="." to="." method="_on_Area2D_longpress_start"]

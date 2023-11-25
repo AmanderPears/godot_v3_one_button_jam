@@ -10,6 +10,7 @@ signal single_click
 signal double_click
 var click_sounds = true
 var buffs = []
+var round_count = 1
 
 
 var scene_resources = {
@@ -22,12 +23,24 @@ var scene_resources = {
 var lastKeyPressTime: float = 0
 export var doublePressThreshold: float = 0.3
 
+
+
+signal longpress_start
+signal longpress_end
+var singleClickRelease = false
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	call_deferred('add_child', scene_resources[\"menu_scene\"].instance())
 	
 	#warning-ignore:return_value_discarded
+	$InputTimer.one_shot = true
+	$InputTimer.wait_time = 0.1
 	$InputTimer.connect(\"timeout\", self, \"_single_press\")
+	
+	$LongPressTimer.wait_time = 0.1
+	$LongPressTimer.connect(\"timeout\", self, \"_long_press\")
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -40,24 +53,39 @@ func next_scene(current, scene_name: String):
 
 
 func _input(event):
-	if (event is InputEventScreenTouch or event is InputEventKey) and event.is_pressed():
-		var currentTime = OS.get_ticks_msec() / 1000.0
+	if (event is InputEventScreenTouch or event is InputEventKey):
+		
+		if event.is_pressed():
+			singleClickRelease = false
+			var currentTime = OS.get_ticks_msec() / 1000.0
 
-		# Check for a double press
-		if currentTime - lastKeyPressTime < doublePressThreshold:
-			$InputTimer.stop()
-			emit_signal(\"double_click\")
+			# Check for a double press
+			if currentTime - lastKeyPressTime < doublePressThreshold:
+				$InputTimer.stop()
+				emit_signal(\"double_click\")
+			else:
+				$InputTimer.start(doublePressThreshold)
+
+			# Update the last key press time
+			lastKeyPressTime = currentTime
 		else:
-			$InputTimer.start(doublePressThreshold)
-
-		# Update the last key press time
-		lastKeyPressTime = currentTime
+			singleClickRelease = true
 		
 		
 func _single_press():
-	emit_signal(\"single_click\")
-	pass
+	if singleClickRelease:
+		print(\"singl;e\")
+		emit_signal(\"single_click\")
+	else:
+		emit_signal(\"longpress_start\")
+		$LongPressTimer.start()
+		print(\"lp_start\")
 
+func _long_press():
+	if singleClickRelease:
+		$LongPressTimer.stop()
+		print(\"lp_end\")
+		emit_signal(\"longpress_end\")
 
 func toggle_click_sounds():
 	click_sounds = !click_sounds
@@ -77,6 +105,10 @@ func toggle_bg_music():
 
 func add_buff(obj):
 	buffs.append(obj)
+
+
+func increment_round_count():
+	round_count += 1
 "
 
 [node name="base" type="Node"]
@@ -94,3 +126,5 @@ stream = ExtResource( 2 )
 
 [node name="InputTimer" type="Timer" parent="."]
 one_shot = true
+
+[node name="LongPressTimer" type="Timer" parent="."]

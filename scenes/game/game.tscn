@@ -10,6 +10,8 @@ export(PackedScene) var enemy_scene_01
 
 #export var mission_duration = 2.0
 
+var round_count
+
 func _ready():
 	randomize()
 	
@@ -18,10 +20,12 @@ func _ready():
 #	$MissonTimer.call_deferred(\"start\", mission_duration)
 	$MissionProgressBar.call(\"start_progress\")
 	
+	round_count = get_parent().get(\"round_count\")
+	
 func _process(_delta):
-	if Engine.get_idle_frames() % 50 == 0:
-		create_enemy()
-		pass
+	if Engine.get_idle_frames() % 200 == 0:
+		for i in round_count:
+			create_enemy()
 
 		
 func create_enemy():
@@ -53,7 +57,8 @@ func create_enemy():
 	var velocity = Vector2(rand_range(100.0, 150.0), 0.0)
 #	mob.linear_velocity = velocity.rotated(direction)
 	mob.linear_velocity = velocity.rotated(direction)
-
+	mob.set(\"initial_linear_velocity\", mob.linear_velocity)
+	
 	# Spawn the mob by adding it to the Main scene.
 	add_child(mob)
 	
@@ -70,6 +75,7 @@ func _on_ship_dead():
 
 
 func _on_MissionProgressBar_mission_over():
+	get_parent().call(\"increment_round_count\")
 	get_parent().call(\"next_scene\", self, \"upgrade_scene\")
 	pass # Replace with function body.
 
@@ -181,7 +187,7 @@ margin_right = -29.0
 margin_bottom = 31.0
 percent_visible = false
 script = SubResource( 2 )
-mission_duration = 10
+mission_duration = 20
 
 [node name="Node" type="Node" parent="."]
 script = SubResource( 3 )
