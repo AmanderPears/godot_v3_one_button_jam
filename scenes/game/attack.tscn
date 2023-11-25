@@ -1,4 +1,7 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://assets/game/enemy_death.ogg" type="AudioStream" id=1]
+[ext_resource path="res://assets/ship/shit_attack.ogg" type="AudioStream" id=2]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Area2D
@@ -7,9 +10,16 @@ export var speed = 250
 export var steer_force = 50
 var target
 var target_vector
+var soundfx_active = true
 
 var velocity = Vector2.ZERO
 var acceleration = Vector2.ZERO
+
+func _ready():
+	soundfx_active = get_tree().root.get_child(0).get(\"click_sounds\")
+	
+	if soundfx_active:
+		$AttackSound.play()
 
 func start(_transform, _target):
 	
@@ -50,8 +60,18 @@ func _on_Timer_timeout():
 	queue_free()
 
 
-func _on_Area2D_body_entered(body):
+func _on_Area2D_body_entered(body):	
+#	body.visible = false
+#	body.get_node(\"CollisionShape2D\").set_deferred(\"disabled\", true)
 	body.queue_free()
+	
+	visible = false
+	get_node(\"CollisionShape2D\").set_deferred(\"disabled\", true)
+	
+	if soundfx_active:
+		$EnemyDeath.play()
+		yield($EnemyDeath, \"finished\")
+	
 	queue_free()
 "
 
@@ -75,6 +95,12 @@ scale = Vector2( 0.5, 0.5 )
 
 [node name="Timer" type="Timer" parent="."]
 one_shot = true
+
+[node name="EnemyDeath" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 1 )
+
+[node name="AttackSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 2 )
 
 [connection signal="body_entered" from="." to="." method="_on_Area2D_body_entered"]
 [connection signal="screen_exited" from="VisibilityNotifier2D" to="." method="_on_VisibilityNotifier2D_screen_exited"]

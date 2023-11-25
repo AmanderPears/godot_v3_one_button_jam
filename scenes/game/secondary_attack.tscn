@@ -27,13 +27,12 @@ func _longpress_end():
 
 
 
-func _process(delta):
+func _process(_delta):
 #	if long_press and Engine.get_idle_frames() % 2 == 0:
 	if long_press :
 		scale += Vector2(0.03, 0.03)
 		scale.x = clamp(scale.x, 0.0, 4.0)
 		scale.y = clamp(scale.y, 0.0, 4.0)
-		print(scale)
 #		scale += Vector2(.01, .01)
 		
 

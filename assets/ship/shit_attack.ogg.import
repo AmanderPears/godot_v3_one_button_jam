@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/shit_attack.ogg-5c9ded2411bbef05e9a5e14273ee5774.oggstr"
+
+[deps]
+
+source_file="res://assets/ship/shit_attack.ogg"
+dest_files=[ "res://.import/shit_attack.ogg-5c9ded2411bbef05e9a5e14273ee5774.oggstr" ]
+
+[params]
+
+loop=false
+loop_offset=0

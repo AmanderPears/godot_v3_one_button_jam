@@ -1,10 +1,11 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://assets/ship/ship_03.png" type="Texture" id=1]
 [ext_resource path="res://assets/ship/ship_01.png" type="Texture" id=2]
 [ext_resource path="res://assets/ship/ship_02.png" type="Texture" id=3]
 [ext_resource path="res://assets/ship/ship.png" type="Texture" id=4]
 [ext_resource path="res://scenes/game/secondary_attack.tscn" type="PackedScene" id=5]
+[ext_resource path="res://assets/ship/ship_hit.ogg" type="AudioStream" id=6]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Area2D
@@ -14,15 +15,21 @@ var attack_resource = preload(\"res://scenes/game/attack.tscn\")
 signal hit
 signal dead
 var ship_max_hp = 5
-var ship_current_hp = 5
+var ship_current_hp = ship_max_hp
 var ship_max_mana = 10
-var ship_current_mana = 10
+var ship_current_mana = ship_max_mana
 var ship_mana_regen_per_second = 1
 var ship_attack_range = 200
 var ship_proj_count = 1
+var soundfx_active
 
+
+func initialize_ship():
+	ship_current_mana = ship_max_mana
+	ship_current_hp = ship_max_hp
 
 func _ready():
+	soundfx_active = get_tree().root.get_child(0).get(\"click_sounds\")
 #	get_child(1).disabled = true
 	#warning-ignore:return_value_discarded
 	get_parent().get_parent().connect(\"single_click\", self, \"_attack_on_single_click\")
@@ -46,6 +53,10 @@ func _process(_delta):
 
 func _on_ship_body_entered(body):
 	ship_current_hp -= 1
+	
+	if soundfx_active:
+		$OnHitSound.play()
+	
 	emit_signal(\"hit\")
 	body.queue_free()
 	# Must be deferred as we can't change physics properties on a physics callback.
@@ -73,6 +84,8 @@ func _on_AttackRange_body_entered(body):
 				var attack_start_path: PathFollow2D = get_node(\"%AttackStartPosition\")
 				attack_start_path.offset = randi()
 				attack.start(attack_start_path.global_transform, body)
+				
+#				$ShipAttackSound.play()
 	#			attack.call_deferred(\"start\", $AttackStartPosition.global_transform, body)
 
 
@@ -95,6 +108,9 @@ func add_to_mana_regen(value):
 	
 func add_to_proj_count(value):
 	ship_proj_count += value
+	
+func add_to_max_hp(value):
+	ship_max_hp += value
 "
 
 [sub_resource type="SpriteFrames" id=5]
@@ -185,6 +201,10 @@ curve = SubResource( 6 )
 unique_name_in_owner = true
 position = Vector2( -51, -6 )
 rotation = -0.104877
+
+[node name="OnHitSound" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = ExtResource( 6 )
 
 [connection signal="body_entered" from="." to="." method="_on_ship_body_entered"]
 [connection signal="body_entered" from="AttackRange" to="." method="_on_AttackRange_body_entered"]

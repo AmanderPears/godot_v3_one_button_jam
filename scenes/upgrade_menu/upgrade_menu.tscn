@@ -25,17 +25,22 @@ var all_buffs = [
 	{
 		\"type\" : \"mana_max\",
 		\"value\" : 2,
-		\"texture_path\" : \"res://assets/max_mana_illu.png\"
+		\"texture_path\" : \"res://assets/upgrade_menu/max_mana_illu.png\"
 	},
 	{
 		\"type\" : \"mana_regen\",
 		\"value\" : 1,
-		\"texture_path\" : \"res://assets/max_mana_regen_illu.png\"
+		\"texture_path\" : \"res://assets/upgrade_menu/max_mana_regen_illu.png\"
 	},
 	{
 		\"type\" : \"extra_proj\",
 		\"value\" : 1,
-		\"texture_path\" : \"res://assets/multiple_proj_illu.png\"
+		\"texture_path\" : \"res://assets/upgrade_menu/multiple_proj_illu.png\"
+	},
+	{
+		\"type\" : \"hp_max\",
+		\"value\" : 1,
+		\"texture_path\" : \"res://assets/upgrade_menu/max_hp_increase.png\"
 	}
 ]
 

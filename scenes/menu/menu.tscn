@@ -30,7 +30,8 @@ func _ready():
 	#warning-ignore:return_value_discarded
 	get_parent().connect(\"double_click\", self, \"double_click\")
 	
-	get_parent().call(\"toggle_bg_music\")
+#	get_parent().call(\"toggle_bg_music\")
+	get_parent().get_node(\"BGMusicPlayer\").play()
 	pass # Replace with function body.
 
 

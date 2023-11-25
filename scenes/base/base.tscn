@@ -11,6 +11,7 @@ signal double_click
 var click_sounds = true
 var buffs = []
 var round_count = 1
+var bg_music = true
 
 
 var scene_resources = {
@@ -40,6 +41,8 @@ func _ready():
 	$InputTimer.connect(\"timeout\", self, \"_single_press\")
 	
 	$LongPressTimer.wait_time = 0.1
+	
+	#warning-ignore:return_value_discarded
 	$LongPressTimer.connect(\"timeout\", self, \"_long_press\")
 
 
@@ -98,8 +101,10 @@ func play_click_sound():
 
 func toggle_bg_music():
 	if $BGMusicPlayer.playing:
+		bg_music = false
 		$BGMusicPlayer.stop()
 	else:
+		bg_music = true
 		$BGMusicPlayer.play()
 
 

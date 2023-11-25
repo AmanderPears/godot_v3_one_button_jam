@@ -16,11 +16,13 @@ func _ready():
 	randomize()
 	
 	load_buffs()
+	$ship.call_deferred(\"initialize_ship\")
+	round_count = get_parent().get(\"round_count\")
 	
 #	$MissonTimer.call_deferred(\"start\", mission_duration)
 	$MissionProgressBar.call(\"start_progress\")
 	
-	round_count = get_parent().get(\"round_count\")
+
 	
 func _process(_delta):
 	if Engine.get_idle_frames() % 200 == 0:
@@ -71,6 +73,7 @@ func create_enemy():
 
 func _on_ship_dead():
 	get_parent().call(\"next_scene\", self, \"menu_scene\")
+	get_tree().root.get_child(0).set(\"round_count\", 1)
 	pass # Replace with function body.
 
 
@@ -88,13 +91,16 @@ func load_buffs():
 		match buff.type:
 			\"mana_max\":
 				$ship.call_deferred(\"add_to_max_mana\", buff.value)
-				print(\"max_mana\")
+#				print(\"max_mana\")
 			\"mana_regen\":
 				$ship.call_deferred(\"add_to_mana_regen\", buff.value)
-				print(\"mana_regen\")
+#				print(\"mana_regen\")
 			\"extra_proj\":
 				$ship.call_deferred(\"add_to_proj_count\", buff.value)
-				print(\"extra proj\")
+#				print(\"extra proj\")
+			\"hp_max\":
+				$ship.call_deferred(\"add_to_max_hp\", buff.value)
+#				print(\"extra proj\")
 		
 "
 
